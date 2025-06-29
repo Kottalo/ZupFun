@@ -14,7 +14,6 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import App from './App.vue'
 import router from './router'
-import { useAxios } from '@/utils/useAxios'
 
 const app = createApp(App)
 
@@ -29,8 +28,6 @@ const vuetify = createVuetify({
     },
   },
 })
-
-app.config.globalProperties.$axios = useAxios();
 
 app
   .use(vuetify)

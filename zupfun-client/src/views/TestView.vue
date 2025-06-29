@@ -33,27 +33,6 @@
         
       </v-stepper-window-item>
 
-      <v-stepper-window-item value="2">
-
-        <div class="fixed-grid">
-          <div class="grid">
-              <v-card v-for="dish in getDishesBySelectionId(2)" class="fill-height" elevation="4" :variant="selectedId2 == dish.id ? 'outlined' : ''" color="selectedId == dish.id ? 'primary' : ''" @click="selectedId2 = dish.id">
-                <v-img
-                  class="align-end text-white fill-height"
-                  :aspect-ratio="2 / 1.2"
-                  :src="dish.image"
-                  cover
-                >
-                  <v-card-title class="text-center text-black" style="background-color: rgba(255, 255, 255, 0.6);">
-                    {{ dish.name }}
-                  </v-card-title>
-                </v-img>
-              </v-card>
-
-          </div>
-        </div>
-
-      </v-stepper-window-item>
     </v-stepper-window>
 
     <v-stepper-actions @click:next="step+=1" @click:prev="step-=1">
@@ -71,23 +50,17 @@ const step = ref(0)
 const selectedId = ref(0)
 const selectedId2 = ref(0)
 
-const dishes = ref([])
-
 onMounted(async () => {
   console.log(getDishesBySelectionId(1))
 })
 
 function getDishesBySelectionId(selectionId) {
-  return _.filter(dishes.value, { selection_id: selectionId })
+  return _.filter(app.store.dishes.value, { selection_id: selectionId })
 }
 
 function getDishById(dishId) {
   console.log(_.find(dishes.value, { id: dishId }))
   return _.find(dishes.value, { id: dishId })
 }
-
-  app.instance.proxy.$axios.post('/getDishes').then((res) => {
-    console.log(res.data)
-  })
   
 </script>
