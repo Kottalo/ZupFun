@@ -1,17 +1,19 @@
 import { Elysia } from "elysia"
 import { drizzle } from 'drizzle-orm/postgres-js'
+import * as schema from '@db/schema';
 import postgres from 'postgres'
+import cors from '@elysiajs/cors'
 
-async function main() {
-  console.log(process.env.DATABASE_URL)
-  // Disable prefetch as it is not supported for "Transaction" pool mode 
-  const client = postgres(process.env.DATABASE_URL, { prepare: false })
-  const db = drizzle({ client });
-}
-main();
+const client = postgres(process.env.DATABASE_URL!, { prepare: false })
+const db = drizzle({ client, schema });
+
+const result = await db.query.dishes.findMany();
 
 const app = new Elysia()
-  .get("/", () => "Hello Elysia").listen(3000)
+  .use(cors())
+  .get("/", () => "Hello Elysia")
+  .post("/getDishes", () => result)
+  .listen(3001)
 
 
 console.log(

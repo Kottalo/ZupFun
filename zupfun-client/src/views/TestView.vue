@@ -71,6 +71,8 @@ const step = ref(0)
 const selectedId = ref(0)
 const selectedId2 = ref(0)
 
+const dishes = ref([])
+
 onMounted(async () => {
   console.log(getDishesBySelectionId(1))
 })
@@ -84,4 +86,8 @@ function getDishById(dishId) {
   return _.find(dishes.value, { id: dishId })
 }
 
+  app.instance.proxy.$axios.post('/getDishes').then((res) => {
+    console.log(res.data)
+  })
+  
 </script>
