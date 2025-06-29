@@ -42,20 +42,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import axios from 'axios'
+import { computed, ref, reactive, onMounted } from 'vue'
+import { useMainStore } from '@/stores'
 import _ from 'lodash'
+
+const store = useMainStore()
 
 const step = ref(0)
 const selectedId = ref(0)
 const selectedId2 = ref(0)
+
+const selectedIds = reactive([0, 0, 0])
 
 onMounted(async () => {
   console.log(getDishesBySelectionId(1))
 })
 
 function getDishesBySelectionId(selectionId) {
-  return _.filter(app.store.dishes.value, { selection_id: selectionId })
+  return _.filter(store.dishes.value, { selection_id: selectionId })
 }
 
 function getDishById(dishId) {
