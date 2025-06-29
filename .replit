@@ -1,0 +1,37 @@
+entrypoint = "index.ts"
+
+hidden = [".config", "bun.lock"]
+modules = ["bun-1.2"]
+
+[nix]
+channel = "stable-24_11"
+
+[deployment]
+build = ["sh", "-c", "bun build --target=bun --outdir=dist index.ts"]
+run = ["bun", "dist/index.js"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 5173
+externalPort = 3000
+exposeLocalhost = true
+
+[workflows]
+runButton = "Dev Server"
+
+[[workflows.workflow]]
+name = "Dev Server"
+author = 25090515
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd zupfun-server && bun run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd zupfun-client && bun run dev"
