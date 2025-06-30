@@ -62,7 +62,7 @@
   </v-stepper>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed, ref, reactive, onMounted } from 'vue'
 import { useMainStore } from '@/stores'
 import _ from 'lodash'
