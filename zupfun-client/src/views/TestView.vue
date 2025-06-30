@@ -1,9 +1,9 @@
 <template>
-  <v-stepper v-model="step" alt-labels vertical class="fill-height d-flex flex-column">
+  <v-stepper v-model="step" vertical class="fill-height d-flex flex-column">
     <!-- Stepper header -->
     <v-stepper-header class="flex-shrink-0">
       <template v-for="(item, index) in store.dishes" :key="index" :value="index">
-        <v-stepper-item class="pa-2" :value="index+1" :title="item.name" :subtitle="selectedIds[index] != 0 ? getDish(index, selectedIds[index]).name : ''"></v-stepper-item>
+        <v-stepper-item :value="index+1" :title="item.name" :subtitle="selectedIds[index] != 0 ? getDish(index, selectedIds[index]).name : ''"></v-stepper-item>
         <v-divider v-if="index < store.dishes.length-1"></v-divider>
       </template>
     </v-stepper-header>
