@@ -19,7 +19,10 @@
               :key="dish.id"
               cols="6"
             >
-              <v-card class="fill-height" :elevation="checkSelected(dish.id) ? 10 : 4" :color="checkSelected(dish.id) ? 'primary' : ''" @click="selectedIds[index] = dish.id"
+              <v-card class="fill-height" 
+                :elevation="checkSelected(dish.id) ? 10 : 4" 
+                :color="checkSelected(dish.id) ? 'primary' : ''" 
+                @click="selectedIds[index] = dish.id"
               >
                 <v-img
                   class="align-end text-white fill-height"
@@ -27,7 +30,8 @@
                   :src="dish.image"
                   cover
                 >
-                  <v-card-title class="text-center text-black" style="background-color: rgba(255, 255, 255, 0.6);">
+                  <v-card-title class="text-center text-black" 
+                    style="background-color: rgba(255, 255, 255, 0.6);">
                     {{ dish.name }}
                   </v-card-title>
                 </v-img>
