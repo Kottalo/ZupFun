@@ -10,7 +10,7 @@
 
     <!-- Stepper content that expands -->
     <v-stepper-window class="flex-grow-1 overflow-auto" v-model="step">
-      <v-stepper-window-item v-for="(item, index) in store.dishes" :key="index" :value="index">
+      <v-stepper-window-item v-for="(item, index) in store.dishes" :key="index" :value="index+1">
 
         <v-container>
           <v-row>
@@ -66,7 +66,7 @@ import _ from 'lodash'
 
 const store = useMainStore()
 
-const step = ref(0)
+const step = ref(1)
 const selectedIds = reactive([0, 0, 0])
 
 function checkSelected(dishId) {
