@@ -34,8 +34,4 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd zupfun-server && bun run dev"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
 args = "cd zupfun-client && bun run dev"

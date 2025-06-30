@@ -10,7 +10,8 @@
   const store = useMainStore()
 
   store.axios.post('/getDishes').then((res) => {
-    store.dishes.value = res.data
+    console.log(res.data)
+    store.dishes = res.data
   })
 
 </script>

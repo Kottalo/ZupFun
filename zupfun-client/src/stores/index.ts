@@ -4,7 +4,7 @@ import { useAxios } from '@/utils/useAxios'
 
 export const useMainStore = defineStore('main', {
   state: () => ({
-    dishes: ref([]),
+    dishes: [],
   }),
   getters: {
     axios: () => useAxios(),

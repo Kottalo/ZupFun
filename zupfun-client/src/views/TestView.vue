@@ -2,20 +2,25 @@
   <v-stepper v-model="step" alt-labels vertical class="fill-height d-flex flex-column">
     <!-- Stepper header -->
     <v-stepper-header class="flex-shrink-0">
-      <v-stepper-item value="1" title="选项A" :subtitle="selectedId != 0 ? getDishById(selectedId).name : ''"></v-stepper-item>
-      <v-divider></v-divider>
-      <v-stepper-item value="2" title="选项B" :subtitle="selectedId2 != 0 ? getDishById(selectedId2).name : ''"></v-stepper-item>
-      <v-divider></v-divider>
-      <v-stepper-item value="3" title="选项C" />
+      <template v-for="(item, index) in store.dishes" :key="index" :value="index">
+        <v-stepper-item :value="index+1" title="选项A" :subtitle="selectedIds[index] != 0 ? getDish(index, selectedIds[index]).name : ''"></v-stepper-item>
+        <v-divider v-if="index < store.dishes.length-1"></v-divider>
+      </template>
     </v-stepper-header>
 
     <!-- Stepper content that expands -->
-    <v-stepper-window class="flex-grow-1 overflow-auto">
-      <v-stepper-window-item value="1">
+    <v-stepper-window class="flex-grow-1 overflow-auto" v-model="step">
+      <v-stepper-window-item v-for="(item, index) in store.dishes" :key="index" :value="index">
 
-        <div class="fixed-grid">
-          <div class="grid">
-              <v-card v-for="dish in getDishesBySelectionId(1)" class="fill-height" elevation="4" :variant="selectedId == dish.id ? 'outlined' : ''" color="selectedId == dish.id ? 'primary' : ''" @click="selectedId = dish.id">
+        <v-container>
+          <v-row>
+            <v-col
+              v-for="dish in item.dishes"
+              :key="dish.id"
+              cols="6"
+            >
+              <v-card class="fill-height" :elevation="checkSelected(dish.id) ? 10 : 4" :color="checkSelected(dish.id) ? 'primary' : ''" @click="selectedIds[index] = dish.id"
+              >
                 <v-img
                   class="align-end text-white fill-height"
                   :aspect-ratio="2 / 1.2"
@@ -27,9 +32,9 @@
                   </v-card-title>
                 </v-img>
               </v-card>
-
-          </div>
-        </div>
+            </v-col>
+          </v-row>
+        </v-container>
         
       </v-stepper-window-item>
 
@@ -49,22 +54,18 @@ import _ from 'lodash'
 const store = useMainStore()
 
 const step = ref(0)
-const selectedId = ref(0)
-const selectedId2 = ref(0)
-
 const selectedIds = reactive([0, 0, 0])
 
-onMounted(async () => {
-  console.log(getDishesBySelectionId(1))
-})
+function checkSelected(dishId) {
+  return selectedIds[step.value] == dishId
+}
 
 function getDishesBySelectionId(selectionId) {
   return _.filter(store.dishes.value, { selection_id: selectionId })
 }
 
-function getDishById(dishId) {
-  console.log(_.find(dishes.value, { id: dishId }))
-  return _.find(dishes.value, { id: dishId })
+function getDish(index, dishId) {
+  return _.find(store.dishes[index].dishes, { id: dishId })
 }
   
 </script>
