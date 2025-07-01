@@ -1,13 +1,9 @@
 <template>
-  <v-card class="mx-auto" max-width="500">
+  <v-card class="mx-auto" max-width="500" tile>
     <v-toolbar color="pink">
-      <v-btn icon="mdi-menu"></v-btn>
+      <v-toolbar-title>点单</v-toolbar-title>
 
-      <v-toolbar-title>Inbox</v-toolbar-title>
-
-      <v-btn icon="mdi-magnify"></v-btn>
-
-      <v-btn icon="mdi-checkbox-marked-circle"></v-btn>
+      <v-btn icon="mdi-close"></v-btn>
     </v-toolbar>
 
     <v-list>
@@ -49,62 +45,58 @@
     transition="dialog-bottom-transition"
     fullscreen
   >
-    <!--
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        prepend-icon="mdi-cog"
-        size="small"
-        text="Settings"
-        v-bind="activatorProps"
-      ></v-btn>
-    </template>
-    -->
+    
+    <v-card class="fill-height">
 
-    <v-card>
-      <v-toolbar>
-        <v-btn
-          icon="mdi-close"
-          @click="dialog = false"
-        ></v-btn>
+      <v-layout>
+        <v-app-bar
+          flat
+          color="white"
+          density="comfortable"
+        >
+          <v-btn icon="mdi-close" @click="dialog = false" />
+          <v-toolbar-title>{{ useMainStore().dishes[groupIndex].name }}</v-toolbar-title>
+        </v-app-bar>
 
-        <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
-
-      </v-toolbar>
-
-      <v-container>
-        <v-row>
-          <v-col
-            v-for="dish in useMainStore().dishes[groupIndex].dishes"
-            :key="dish.id"
-            cols="6"
-          >
-
-            <v-card
-              :class="[
-                'fill-height'
-              ]"
-              elevation="4" 
-              @click="selectedIds[groupIndex] = dish.id;dialog = false"
-            >
-              <v-img
-                class="align-end text-white fill-height"
-                :aspect-ratio="2 / 1.4"
-                :src="dish.image"
-                cover
+        <v-main>
+          <v-container>
+            <v-row>
+              <v-col
+                v-for="dish in useMainStore().dishes[groupIndex].dishes"
+                :key="dish.id"
+                cols="6"
               >
-                <v-card-title
-                  class="text-center text-black text-subtitle-1 pa-1"
-                  style="background-color: rgba(255, 255, 255, 0.6);"
+
+                <v-card
+                  :class="[
+                    'fill-height'
+                  ]"
+                  elevation="4" 
+                  @click="selectedIds[groupIndex] = dish.id;dialog = false"
                 >
-                  {{ dish.name }}
-                </v-card-title>
-              </v-img>
-            </v-card>
+                  <v-img
+                    class="align-end text-white fill-height"
+                    :aspect-ratio="2 / 1.4"
+                    :src="dish.image"
+                    cover
+                  >
+                    <v-card-title
+                      class="text-center text-black text-subtitle-1 pa-1"
+                      style="background-color: rgba(255, 255, 255, 0.6);"
+                    >
+                      {{ dish.name }}
+                    </v-card-title>
+                  </v-img>
+                </v-card>
 
 
-          </v-col>
-        </v-row>
-      </v-container>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-main>
+      </v-layout>
+      
+      
     </v-card>
   </v-dialog>
 </template>
