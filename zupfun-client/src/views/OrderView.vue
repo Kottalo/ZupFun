@@ -1,43 +1,80 @@
 <template>
-  <v-card class="mx-auto" max-width="500" tile>
-    <v-toolbar color="pink">
-      <v-toolbar-title>点单</v-toolbar-title>
+  <v-card class="mx-auto h-100" tile>
+    <v-layout class="h-100">
+      <v-app-bar
+        flat
+        color="pink"
+        density="comfortable"
+      >
+        <v-toolbar-title>点单</v-toolbar-title>
 
-      <v-btn icon="mdi-close"></v-btn>
-    </v-toolbar>
+        <v-btn icon="mdi-close" @click="dialog = false" />
+      </v-app-bar>
 
-    <v-list>
-      <template v-for="(item, index) in useMainStore().dishes"
-        :key="index">
-        <v-list-item
-          :value="item.id"
-          class="py-3"
-          :active="false"
-          @click="groupIndex = index;dialogTitle = item.name;dialog = true;"
-        >
-          <v-list-item-title>{{ item.name }}</v-list-item-title>
+      <v-main class="h-100">
+        <v-container class="h-100 d-flex flex-column">
+          <v-card>
+            <v-toolbar color="secondary" density="compact">
+              <v-toolbar-title>选择物品</v-toolbar-title>
+            </v-toolbar>
+            
+            <v-list>
+              <template v-for="(item, index) in useMainStore().dishes"
+                :key="index">
+                <v-list-item
+                  :value="item.id"
+                  class="py-3"
+                  :active="false"
+                  @click="groupIndex = index;dialogTitle = item.name;dialog = true;"
+                >
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
 
-          <v-list-item-subtitle class="mb-1 text-high-emphasis opacity-100">{{ selectedIds[index] != 0 ? getDish(index, selectedIds[index]).name : '' }}</v-list-item-subtitle>
+                  <v-list-item-subtitle class="mb-1 text-high-emphasis opacity-100">{{ selectedItems[index] ? selectedItems[index].name : '' }}</v-list-item-subtitle>
 
-          <v-list-item-subtitle class="text-high-emphasis">{{ selectedIds[index] != 0 ? 'RM ' + getDish(index, selectedIds[index]).price.toFixed(2) : '' }}</v-list-item-subtitle>
+                  <v-list-item-subtitle class="text-high-emphasis">{{ selectedItems[index] ? 'RM ' + selectedItems[index].price.toFixed(2) : '' }}</v-list-item-subtitle>
 
-          <template v-slot:append>
-            <v-list-item-action class="flex-column align-end">
+                  <template v-slot:append>
+                    <v-list-item-action class="flex-column align-end">
 
-              <v-img
-                v-if="selectedIds[index] != 0"
-                width="100"
-                :aspect-ratio="16/9"
-                cover
-                :src="getDish(index, selectedIds[index]).image"
-              ></v-img>
-            </v-list-item-action>
-          </template>
-        </v-list-item>
+                      <v-img
+                        v-if="selectedItems[index]"
+                        width="100"
+                        :aspect-ratio="16/9"
+                        cover
+                        :src="selectedItems[index].image"
+                      ></v-img>
+                    </v-list-item-action>
+                  </template>
+                </v-list-item>
 
-        <v-divider v-if="index < useMainStore().dishes.length-1" class="ma-0"></v-divider>
-      </template>
-    </v-list>
+                <v-divider v-if="index < useMainStore().dishes.length-1" class="ma-0"></v-divider>
+              </template>
+            </v-list>
+          </v-card>
+
+          <v-sheet class="flex-grow-1 d-flex align-end">
+            <v-card class="w-100">
+              <v-toolbar color="secondary" density="compact">
+                <v-toolbar-title>清算</v-toolbar-title>
+              </v-toolbar>
+              
+              <v-list lines="one">
+                <v-list-item>
+                  <v-list-item-title>总数</v-list-item-title>
+                  <v-list-item-subtitle>RM {{ totalAmount.toFixed(2) }}</v-list-item-subtitle>
+                </v-list-item>
+
+                <v-divider class="my-2"></v-divider>
+
+                <v-list-item>
+                  <v-btn block color="pink">结账</v-btn>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-sheet>
+        </v-container>
+      </v-main>
+    </v-layout>
   </v-card>
 
   <v-dialog
@@ -70,7 +107,7 @@
                     'fill-height'
                   ]"
                   elevation="4" 
-                  @click="selectedIds[groupIndex] = dish.id;dialog = false"
+                  @click="selectedItems[groupIndex] = dish;dialog = false"
                 >
                   <v-img
                     class="align-end text-white fill-height"
@@ -100,36 +137,19 @@
   import _ from 'lodash'
   import { useMainStore } from '@/stores'
   
-  import { shallowRef, ref, reactive } from 'vue'
-
-  const items = [
-    { id: 1, action: '15 min', headline: 'Brunch this weekend?', subtitle: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`, title: 'Ali Connors' },
-    { id: 2, action: '2 hr', headline: 'Summer BBQ', subtitle: `Wish I could come, but I'm out of town this weekend.`, title: 'me, Scrott, Jennifer' },
-    { id: 3, action: '6 hr', headline: 'Oui oui', subtitle: 'Do you have Paris recommendations? Have you ever been?', title: 'Sandra Adams' },
-    { id: 4, action: '12 hr', headline: 'Birthday gift', subtitle: 'Have any ideas about what we should get Heidi for her birthday?', title: 'Trevor Hansen' },
-    { id: 5, action: '18hr', headline: 'Recipe to try', subtitle: 'We should eat this: Grate, Squash, Corn, and tomatillo Tacos.', title: 'Britta Holt' },
-  ]
-
-  const selected = shallowRef([2])
+  import { shallowRef, ref, reactive, computed } from 'vue'
 
   const dialog = shallowRef(false)
   const dialogTitle = shallowRef('')
-  const notifications = shallowRef(false)
-  const sound = shallowRef(true)
-  const widgets = shallowRef(false)
 
   const groupIndex = ref(0)
-  const selectedIds = reactive([0, 0, 0])
+  const selectedItems = reactive([null, null, null])
 
   function checkSelected(dishId) {
     return selectedIds[groupIndex.value] == dishId
   }
 
-  function getDishesBySelectionId(selectionId) {
-    return _.filter(useMainStore().dishes.value, { selection_id: selectionId })
-  }
-
-  function getDish(index, dishId) {
-    return _.find(useMainStore().dishes[index].dishes, { id: dishId })
-  }
+  const totalAmount = computed(() => {
+    return _.sumBy(selectedItems, 'price')
+  })
 </script>
