@@ -6,7 +6,7 @@
         color="pink"
         density="comfortable"
       >
-        <v-btn icon="mdi-close" @click="dialog = false" />
+        <v-btn icon="mdi-close" @click="" />
         <v-toolbar-title></v-toolbar-title>
       </v-app-bar>
 
