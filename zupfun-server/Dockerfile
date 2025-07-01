@@ -5,7 +5,7 @@ FROM oven/bun:1
 WORKDIR /app
 
 # Copy dependency files
-COPY bun.lockb package.json yarn.lock ./
+COPY bun.lockb package.json ./
 RUN bun install
 
 # Copy the rest of the app
