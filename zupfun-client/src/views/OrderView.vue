@@ -61,7 +61,7 @@
               <v-list lines="one">
                 <v-list-item>
                   <v-list-item-title>总数</v-list-item-title>
-                  <v-list-item-subtitle>RM {{ totalAmount.toFixed(2) }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>RM {{ totalAmount }}</v-list-item-subtitle>
                 </v-list-item>
 
                 <v-divider class="my-2"></v-divider>
@@ -137,12 +137,12 @@
   import _ from 'lodash'
   import { useMainStore } from '@/stores'
   
-  import { shallowRef, ref, reactive, computed } from 'vue'
+  import { shallowRef, reactive, computed } from 'vue'
 
   const dialog = shallowRef(false)
   const dialogTitle = shallowRef('')
 
-  const groupIndex = ref(0)
+  const groupIndex = shallowRef(0)
   const selectedItems = reactive([null, null, null])
 
   function checkSelected(dishId) {
@@ -150,6 +150,7 @@
   }
 
   const totalAmount = computed(() => {
-    return _.sumBy(selectedItems, 'price')
+    const total = _.sumBy(selectedItems, item => item?.price ?? 0)
+    return total.toFixed(2)
   })
 </script>
