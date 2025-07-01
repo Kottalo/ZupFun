@@ -69,17 +69,14 @@ const app = new Elysia()
 
     message(ws, { event, data }) {
 
-      // // console.log(message)
-      // const payload = JSON.parse(event)
-      console.log(data)
-      // switch (payload.event) {
-      //   case 'testEvent':
-      //     console.log(message)
-      //     break
-      //   default:
-      //     console.log('Invalid message')
-      //     return
-      // }
+      switch (event) {
+        case 'testEvent':
+          console.log(data)
+          break
+        default:
+          console.log('Invalid message')
+          return
+      }
     },
 
     close(ws) {
