@@ -1,4 +1,4 @@
-import { Elysia } from "elysia"
+import { Elysia, t } from "elysia"
 import { drizzle } from 'drizzle-orm/postgres-js'
 import * as schema from '@db/schema';
 import postgres from 'postgres'
@@ -55,6 +55,38 @@ const app = new Elysia()
 
     await db.insert(schema.orderItems).values(formatted)
   })
+
+  .ws('/ws', {
+    body: t.Object({
+      event: t.String(),
+      data: t.Any()
+    }),
+
+    open(ws) {
+      console.log('🟢 Client connected')
+      ws.send('Welcome from server!')
+    },
+
+    message(ws, { event, data }) {
+
+      // // console.log(message)
+      // const payload = JSON.parse(event)
+      console.log(data)
+      // switch (payload.event) {
+      //   case 'testEvent':
+      //     console.log(message)
+      //     break
+      //   default:
+      //     console.log('Invalid message')
+      //     return
+      // }
+    },
+
+    close(ws) {
+      console.log('🔴 Client disconnected')
+    },
+  })
+
   .listen(3001)
 
 

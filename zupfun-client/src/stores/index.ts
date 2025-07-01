@@ -1,5 +1,20 @@
 import { defineStore } from 'pinia'
 import { useAxios } from '@/utils/useAxios'
+import { useWebSocket } from '@vueuse/core'
+import { watch } from 'vue'
+
+const ws = useWebSocket(`wss://${import.meta.env.VITE_API_URL}/ws`, {
+  autoReconnect: {
+    retries: 5,
+    delay: 1000,
+  },
+})
+
+watch(ws.data, (value) => {
+  if (value) {
+    console.log(value.a)
+  }
+})
 
 export const useMainStore = defineStore('main', {
   state: () => ({
@@ -7,8 +22,11 @@ export const useMainStore = defineStore('main', {
   }),
   getters: {
     axios: () => useAxios(),
+    ws: () => ws,
   },
   actions: {
-
+    sendMessage(payload: { event: string, data: any }) {
+      ws.send(JSON.stringify(payload))
+    }
   },
 })
