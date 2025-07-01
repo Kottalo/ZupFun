@@ -7,9 +7,7 @@
   
   import { useMainStore } from '@/stores'
 
-  const store = useMainStore()
-
-  store.axios.post('/getDishes').then((res) => {
+  useMainStore().axios.post('/getDishes').then((res) => {
     console.log(res.data)
     store.dishes = res.data
   })
