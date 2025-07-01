@@ -9,7 +9,7 @@
 
   useMainStore().axios.post('/getDishes').then((res) => {
     console.log(res.data)
-    store.dishes = res.data
+    useMainStore().dishes = res.data
   })
 
 </script>

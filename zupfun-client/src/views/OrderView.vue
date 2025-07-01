@@ -67,7 +67,9 @@
                 <v-divider class="my-2"></v-divider>
 
                 <v-list-item>
-                  <v-btn block color="pink">结账</v-btn>
+                  <v-btn block color="pink" :disabled="!submittable"
+                    @click="submitOrder"
+                  >结账</v-btn>
                 </v-list-item>
               </v-list>
             </v-card>
@@ -145,6 +147,12 @@
   const groupIndex = shallowRef(0)
   const selectedItems = reactive([null, null, null])
 
+  function submitOrder() {
+    useMainStore().axios.post("/submitOrder", selectedItems, (res) => {
+      console.log(res)
+    })
+  }
+
   function checkSelected(dishId) {
     return selectedIds[groupIndex.value] == dishId
   }
@@ -153,4 +161,8 @@
     const total = _.sumBy(selectedItems, item => item?.price ?? 0)
     return total.toFixed(2)
   })
+
+  const submittable = computed(() =>
+    _.every(selectedItems, item => item !== null)
+  )
 </script>

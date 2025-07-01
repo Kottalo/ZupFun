@@ -26,12 +26,3 @@ exposeLocalhost = true
 
 [workflows]
 runButton = "Dev Server"
-
-[[workflows.workflow]]
-name = "Dev Server"
-author = 25090515
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd zupfun-client && bun run dev"

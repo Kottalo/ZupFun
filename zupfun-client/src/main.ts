@@ -1,5 +1,4 @@
 import './assets/main.css'
-import 'bulma/css/bulma.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

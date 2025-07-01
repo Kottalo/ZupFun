@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import * as schema from '@db/schema';
 import postgres from 'postgres'
 import cors from '@elysiajs/cors'
+import _ from 'lodash'
 
 const client = postgres(process.env.DATABASE_URL!, { prepare: false })
 const db = drizzle({ client, schema });
@@ -29,10 +30,30 @@ const app = new Elysia()
         name: link.dish.name,
         price: link.dish.price,
         image: link.dish.image,
+        group: _.omit(group, 'dishLinks'),
       })),
     }))
-    
+
     return simplified
+  })
+  .post('/submitOrder', async ({ body, set }) => {
+    const data = body
+
+    const [order] = await db.insert(schema.orders).values({
+      customer_name: 'Alice'
+    }).returning()
+
+    const formatted = _.map(data as
+      {
+        id: number
+        group: { id: number }
+      }[], item => ({
+        order_id: order.id,
+        dish_id: item.id,
+        group_id: item.group.id,
+      }))
+
+    await db.insert(schema.orderItems).values(formatted)
   })
   .listen(3001)
 
