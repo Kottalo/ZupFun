@@ -45,13 +45,11 @@
     transition="dialog-bottom-transition"
     fullscreen
   >
-    
-    <v-card class="fill-height">
-
+    <v-card>
       <v-layout>
         <v-app-bar
           flat
-          color="white"
+          color="pink"
           density="comfortable"
         >
           <v-btn icon="mdi-close" @click="dialog = false" />
@@ -89,14 +87,11 @@
                   </v-img>
                 </v-card>
 
-
               </v-col>
             </v-row>
           </v-container>
         </v-main>
       </v-layout>
-      
-      
     </v-card>
   </v-dialog>
 </template>
