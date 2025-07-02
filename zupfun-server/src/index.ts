@@ -44,7 +44,7 @@ const app = new Elysia()
     }),
 
     open(ws) {
-      ws.subscribe('chatroom-123')
+      ws.subscribe('chatroom')
       // console.log('🟢 Client connected')
       // ws.send('Welcome from server!')
     },
@@ -83,7 +83,7 @@ const app = new Elysia()
 
           // console.log(JSON.stringify(orders, null, 2))
 
-          ws.publish('chatroom-123', {
+          ws.publish('chatroom', {
             event: 'updateOrders',
             data: orders
           })
