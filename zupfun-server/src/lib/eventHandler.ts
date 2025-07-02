@@ -1,11 +1,15 @@
 import { ElysiaWS } from 'elysia/ws'
+import { eq } from 'drizzle-orm'
 import * as schema from '@/db/schema'
 import _ from 'lodash'
 
 import db from '@/lib/db'
 
-async function getOrders() {
+async function getOrders({ profileId = 0 }: { profileId?: number }) {
+  const where: any = profileId ? eq(schema.orders.profile_id, profileId) : null
+
   return await db.query.orders.findMany({
+    where: where,
     with: {
       items: {
         with: {
@@ -17,19 +21,19 @@ async function getOrders() {
   })
 }
 
+async function getUserOrders(ws: ElysiaWS, data: any) {
+  const userOrders = await getOrders({ profileId: data.profileId })
+
+  ws.send({
+    event: 'getUserOrders',
+    data: userOrders,
+  })
+}
+
 export async function eventHandler(ws: ElysiaWS, body: { event: string, data: any }) {
   switch (body.event) {
     case 'getUserOrders': {
-      const userOrders = await db.query.orders.findMany({
-        with: {
-          profile: true
-        }
-      })
-
-      ws.send({
-        event: 'getUserOrders',
-        data: userOrders,
-      })
+      await getUserOrders(ws, body.data)
 
       break
     }
@@ -69,7 +73,7 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: an
     case 'updateOrders': {
       ws.send({
         event: 'updateOrders',
-        data: await getOrders()
+        data: await getOrders({})
       })
 
       break
@@ -93,10 +97,17 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: an
         await tx.insert(schema.orderItems).values(formatted);
       });
 
+      ws.send({
+        event: 'updateUserOrders',
+        data: await getOrders({})
+      })
+
       ws.publish('admin', {
         event: 'updateOrders',
-        data: await getOrders()
+        data: await getOrders({})
       });
+
+      await getUserOrders(ws, body.data)
 
       break;
     }

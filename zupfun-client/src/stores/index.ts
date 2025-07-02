@@ -15,7 +15,7 @@ watch(ws.data, (message) => {
   console.log(body)
   switch (body.event) {
     case 'getUserOrders':
-      useMainStore().orders = body.data
+      useMainStore().userOrders = body.data
       break
     case 'updateDishes':
       useMainStore().dishes = body.data

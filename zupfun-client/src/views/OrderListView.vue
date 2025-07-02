@@ -24,11 +24,11 @@
 
       <v-main class="h-100">
         <v-list>
-          <template>
+          <template v-for="order in useMainStore().userOrders">
             <v-list-item
               
             >
-              <v-list-item-title></v-list-item-title>
+              <v-list-item-title>订单{{ order.id }}</v-list-item-title>
 
               <v-list-item-subtitle class="mb-1 text-high-emphasis opacity-100"></v-list-item-subtitle>
 
@@ -82,6 +82,6 @@
   useMainStore()
   .sendMessage({
     event: 'getUserOrders',
-    data: {}
+    data: { profileId: useMainStore().profileId }
   })
 </script>

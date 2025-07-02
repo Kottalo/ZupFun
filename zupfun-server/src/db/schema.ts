@@ -61,6 +61,7 @@ export const dishToGroupRelations = relations(dishToGroup, ({ one }) => ({
 export const orders = pgTable('orders', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   profile_id: integer().notNull(),
+  
   created_at: timestamp('created_at').defaultNow(),
 })
 
