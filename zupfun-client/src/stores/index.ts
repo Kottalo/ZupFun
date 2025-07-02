@@ -14,6 +14,8 @@ watch(ws.data, (message) => {
   const body = JSON.parse(message)
   console.log(body)
   switch (body.event) {
+    case 'updateDishes':
+      useMainStore().dishes = body.data
     case 'updateOrders':
       useMainStore().orders = body.data
       break
@@ -30,7 +32,7 @@ export const useMainStore = defineStore('main', {
     ws: () => ws,
   },
   actions: {
-    sendMessage(payload: { event: string, data: any }) {
+    async sendMessage(payload: { event: string, data: any }) {
       ws.send(JSON.stringify(payload))
     }
   },

@@ -139,13 +139,21 @@
   import _ from 'lodash'
   import { useMainStore } from '@/stores'
   
-  import { shallowRef, reactive, computed } from 'vue'
+  import { shallowRef, reactive, computed, onMounted } from 'vue'
 
   const dialog = shallowRef(false)
   const dialogTitle = shallowRef('')
 
   const groupIndex = shallowRef(0)
   const selectedItems = reactive([null, null, null])
+
+  onMounted(() => {
+    useMainStore()
+      .sendMessage({
+        event: 'updateDishes',
+        data: {}
+      })
+  })
 
   function submitOrder() {
     useMainStore().sendMessage({
