@@ -4,9 +4,22 @@ import _ from 'lodash'
 
 import db from '@/lib/db'
 
+async function getOrders() {
+  return await db.query.orders.findMany({
+    with: {
+      items: {
+        with: {
+          dish: true,
+          group: true,
+        }
+      }
+    }
+  })
+}
+
 export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Object }) {
   switch (body.event) {
-    case "updateDishes": {
+    case 'updateDishes': {
 
       const groupsWithDishes = await db.query.dishGroups.findMany({
         with: {
@@ -38,7 +51,16 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Ob
       break
     }
 
-    case "updateOrders": {
+    case 'updateOrders': {
+      ws.send({
+        event: 'updateOrders',
+        data: await getOrders()
+      })
+
+      break
+    }
+
+    case 'submitOrders': {
       const [order] = await db.insert(schema.orders).values({
         customer_name: 'Alice'
       }).returning()
@@ -54,24 +76,6 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Ob
         }))
 
       await db.insert(schema.orderItems).values(formatted)
-
-      const orders = await db.query.orders.findMany({
-        with: {
-          items: {
-            with: {
-              dish: true,
-              group: true,
-            }
-          }
-        }
-      })
-
-      // console.log(JSON.stringify(orders, null, 2))
-
-      ws.publish('chatroom', {
-        event: 'updateOrders',
-        data: orders
-      })
 
       break
     }

@@ -67,8 +67,8 @@
                 <v-divider class="my-2"></v-divider>
 
                 <v-list-item>
-                  <v-btn block color="pink" :disabled="!submittable"
-                    @click="submitOrder"
+                  <v-btn block color="pink" 
+                    @click="test"
                   >结账</v-btn>
                 </v-list-item>
               </v-list>
@@ -146,6 +146,13 @@
 
   const groupIndex = shallowRef(0)
   const selectedItems = reactive([null, null, null])
+
+  function test() {
+    useMainStore().sendMessage({
+      event: 'updateOrders',
+      data: {}
+    })
+  }
 
   onMounted(() => {
     useMainStore()

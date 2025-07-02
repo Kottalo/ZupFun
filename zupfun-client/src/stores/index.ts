@@ -16,6 +16,7 @@ watch(ws.data, (message) => {
   switch (body.event) {
     case 'updateDishes':
       useMainStore().dishes = body.data
+      break
     case 'updateOrders':
       useMainStore().orders = body.data
       break

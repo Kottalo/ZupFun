@@ -34,9 +34,9 @@
                 :key="order.id"
               >
                 <td>{{ order.id }}</td>
-                <td>{{ order.items[0].dish.name }}</td>
-                <td>{{ order.items[1].dish.name }}</td>
-                <td>{{ order.items[2].dish.name }}</td>
+                <td>{{ order.items[0]?.dish?.name }}</td>
+                <td>{{ order.items[1]?.dish?.name }}</td>
+                <td>{{ order.items[2]?.dish?.name }}</td>
               </tr>
             </tbody>
           </v-table>
@@ -48,6 +48,12 @@
 
 <script setup>
   import { useMainStore } from '@/stores'
-  import { ref } from 'vue'
-  
+  import { ref, onMounted } from 'vue'
+
+  onMounted(() => {
+    useMainStore().sendMessage({
+      event: 'updateOrders',
+      data: {}
+    })
+  })
 </script>

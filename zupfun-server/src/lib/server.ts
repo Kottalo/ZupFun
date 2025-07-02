@@ -12,7 +12,7 @@ const app = new Elysia()
     }),
 
     open(ws) {
-      ws.subscribe('chatroom')
+      ws.subscribe('admin')
       console.log('🟢 Client connected')
     },
 
