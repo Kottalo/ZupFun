@@ -17,6 +17,8 @@ const app = new Elysia()
     },
 
     async message(ws, body) {
+      console.log(body)
+
       await eventHandler(ws, body)
     },
 
