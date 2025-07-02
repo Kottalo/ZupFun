@@ -60,7 +60,7 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Ob
       break
     }
 
-    case 'submitOrders': {
+    case 'submitOrder': {
       const [order] = await db.insert(schema.orders).values({
         customer_name: 'Alice'
       }).returning()
@@ -76,6 +76,11 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Ob
         }))
 
       await db.insert(schema.orderItems).values(formatted)
+
+      ws.publish('admin', {
+        event: 'updateOrders',
+        data: await getOrders()
+      })
 
       break
     }
