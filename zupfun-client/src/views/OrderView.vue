@@ -68,7 +68,7 @@
 
                 <v-list-item>
                   <v-btn block color="pink" 
-                    @click="test"
+                    @click="submitOrder"
                   >结账</v-btn>
                 </v-list-item>
               </v-list>
