@@ -8,7 +8,7 @@
       >
         <v-toolbar-title>点单</v-toolbar-title>
 
-        <v-btn icon="mdi-close" @click="dialog = false" />
+        <v-btn icon="mdi-close" @click="router.push('/orderList')" />
       </v-app-bar>
 
       <v-main class="h-100">
@@ -138,10 +138,13 @@
 
 <script setup>
   import _ from 'lodash'
+  import { useRouter } from 'vue-router'
   import { useMainStore } from '@/stores'
   
   import { shallowRef, reactive, computed, onMounted } from 'vue'
 
+  const router = useRouter()
+  
   const dialog = shallowRef(false)
   const dialogTitle = shallowRef('')
 
@@ -159,7 +162,10 @@
   function submitOrder() {
     useMainStore().sendMessage({
       event: 'submitOrder',
-      data: selectedItems,
+      data: {
+        profileId: useMainStore().profileId,
+        selectedItems: selectedItems,
+      },
     })
   }
 

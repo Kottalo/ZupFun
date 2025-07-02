@@ -5,7 +5,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/order'
+      redirect: '/orderList'
+    },
+    {
+      path: '/orderList',
+      name: 'orderList',
+      component: () => import('../views/OrderListView.vue'),
     },
     {
       path: '/order',

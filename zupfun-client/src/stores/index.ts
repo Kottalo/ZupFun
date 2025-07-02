@@ -14,6 +14,9 @@ watch(ws.data, (message) => {
   const body = JSON.parse(message)
   console.log(body)
   switch (body.event) {
+    case 'getUserOrders':
+      useMainStore().orders = body.data
+      break
     case 'updateDishes':
       useMainStore().dishes = body.data
       break
@@ -25,8 +28,10 @@ watch(ws.data, (message) => {
 
 export const useMainStore = defineStore('main', {
   state: () => ({
+    profileId: 1,
     dishes: [],
     orders: [],
+    userOrders: [],
   }),
   getters: {
     axios: () => useAxios(),

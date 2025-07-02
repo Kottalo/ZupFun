@@ -17,8 +17,23 @@ async function getOrders() {
   })
 }
 
-export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Object }) {
+export async function eventHandler(ws: ElysiaWS, body: { event: string, data: any }) {
   switch (body.event) {
+    case 'getUserOrders': {
+      const userOrders = await db.query.orders.findMany({
+        with: {
+          profile: true
+        }
+      })
+
+      ws.send({
+        event: 'getUserOrders',
+        data: userOrders,
+      })
+
+      break
+    }
+
     case 'updateDishes': {
 
       const groupsWithDishes = await db.query.dishGroups.findMany({
@@ -61,28 +76,29 @@ export async function eventHandler(ws: ElysiaWS, body: { event: string, data: Ob
     }
 
     case 'submitOrder': {
-      const [order] = await db.insert(schema.orders).values({
-        customer_name: 'Alice'
-      }).returning()
+      await db.transaction(async (tx) => {
+        const [order] = await tx.insert(schema.orders).values({
+          profile_id: body.data.profileId
+        }).returning();
 
-      const formatted = _.map(body.data as
-        {
-          id: number
-          group: { id: number }
-        }[], item => ({
+        const formatted = (body.data.selectedItems as {
+          id: number;
+          group: { id: number };
+        }[]).map(item => ({
           order_id: order.id,
           dish_id: item.id,
           group_id: item.group.id,
-        }))
+        }));
 
-      await db.insert(schema.orderItems).values(formatted)
+        await tx.insert(schema.orderItems).values(formatted);
+      });
 
       ws.publish('admin', {
         event: 'updateOrders',
         data: await getOrders()
-      })
+      });
 
-      break
+      break;
     }
   }
 }

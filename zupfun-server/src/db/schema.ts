@@ -8,6 +8,12 @@ import {
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
+// Profiles
+export const profiles = pgTable('profiles', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 64 }).notNull(),
+})
+
 // Dishes
 export const dishes = pgTable('dishes', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -54,9 +60,14 @@ export const dishToGroupRelations = relations(dishToGroup, ({ one }) => ({
 // Orders
 export const orders = pgTable('orders', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  customer_name: varchar({ length: 64 }),
+  profile_id: integer().notNull(),
   created_at: timestamp('created_at').defaultNow(),
 })
+
+// Relations for profiles
+export const profilesRelations = relations(profiles, ({ many }) => ({
+  orders: many(orders),
+}))
 
 // Order Items (join table)
 export const orderItems = pgTable(
@@ -72,8 +83,12 @@ export const orderItems = pgTable(
 )
 
 // Relations for orders
-export const ordersRelations = relations(orders, ({ many }) => ({
+export const ordersRelations = relations(orders, ({ one, many }) => ({
   items: many(orderItems),
+  profile: one(profiles, {
+    fields: [orders.profile_id],
+    references: [profiles.id],
+  })
 }))
 
 // Relations for order_items
