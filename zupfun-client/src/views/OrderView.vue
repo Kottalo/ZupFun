@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto h-100" tile>
+  <v-card class="h-100" tile>
     <v-layout class="h-100">
       <v-app-bar
         flat
@@ -12,7 +12,7 @@
       </v-app-bar>
 
       <v-main class="h-100">
-        <v-container class="h-100 d-flex flex-column">
+        <v-container fluid class="h-100 d-flex flex-column">
           <v-card>
             <v-toolbar color="secondary" density="compact">
               <v-toolbar-title>选择物品</v-toolbar-title>
@@ -34,7 +34,7 @@
                   <v-list-item-subtitle class="text-high-emphasis">{{ selectedItems[index] ? 'RM ' + selectedItems[index].price.toFixed(2) : '' }}</v-list-item-subtitle>
 
                   <template v-slot:append>
-                    <v-list-item-action class="flex-column align-end">
+                    <v-list-item-action class="align-end">
 
                       <v-img
                         v-if="selectedItems[index]"
@@ -148,8 +148,9 @@
   const selectedItems = reactive([null, null, null])
 
   function submitOrder() {
-    useMainStore().axios.post("/submitOrder", selectedItems, (res) => {
-      console.log(res)
+    useMainStore().sendMessage({
+      event: 'submitOrder',
+      data: selectedItems,
     })
   }
 

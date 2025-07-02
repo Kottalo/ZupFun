@@ -36,25 +36,6 @@ const app = new Elysia()
 
     return simplified
   })
-  .post('/submitOrder', async ({ body, set }) => {
-    const data = body
-
-    const [order] = await db.insert(schema.orders).values({
-      customer_name: 'Alice'
-    }).returning()
-
-    const formatted = _.map(data as
-      {
-        id: number
-        group: { id: number }
-      }[], item => ({
-        order_id: order.id,
-        dish_id: item.id,
-        group_id: item.group.id,
-      }))
-
-    await db.insert(schema.orderItems).values(formatted)
-  })
 
   .ws('/ws', {
     body: t.Object({
@@ -63,15 +44,50 @@ const app = new Elysia()
     }),
 
     open(ws) {
-      console.log('🟢 Client connected')
-      ws.send('Welcome from server!')
+      ws.subscribe('chatroom-123')
+      // console.log('🟢 Client connected')
+      // ws.send('Welcome from server!')
     },
 
-    message(ws, { event, data }) {
+    async message(ws, { event, data }) {
 
       switch (event) {
-        case 'testEvent':
-          console.log(data)
+        case 'submitOrder':
+
+          const [order] = await db.insert(schema.orders).values({
+            customer_name: 'Alice'
+          }).returning()
+
+          const formatted = _.map(data as
+            {
+              id: number
+              group: { id: number }
+            }[], item => ({
+              order_id: order.id,
+              dish_id: item.id,
+              group_id: item.group.id,
+            }))
+
+          await db.insert(schema.orderItems).values(formatted)
+
+          const orders = await db.query.orders.findMany({
+            with: {
+              items: {
+                with: {
+                  dish: true,
+                  group: true,
+                }
+              }
+            }
+          })
+
+          // console.log(JSON.stringify(orders, null, 2))
+
+          ws.publish('chatroom-123', {
+            event: 'updateOrders',
+            data: orders
+          })
+
           break
         default:
           console.log('Invalid message')

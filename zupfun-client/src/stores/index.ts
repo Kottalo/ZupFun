@@ -10,15 +10,20 @@ const ws = useWebSocket(`wss://${import.meta.env.VITE_API_URL}/ws`, {
   },
 })
 
-watch(ws.data, (value) => {
-  if (value) {
-    console.log(value.a)
+watch(ws.data, (message) => {
+  const body = JSON.parse(message)
+  console.log(body)
+  switch (body.event) {
+    case 'updateOrders':
+      useMainStore().orders = body.data
+      break
   }
 })
 
 export const useMainStore = defineStore('main', {
   state: () => ({
     dishes: [],
+    orders: [],
   }),
   getters: {
     axios: () => useAxios(),
